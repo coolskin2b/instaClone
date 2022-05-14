@@ -56,6 +56,5 @@ export default StyleSheet.create({
   },
   icon: {
     marginHorizontal: 10,
-    color: colors.black,
   },
 });

@@ -1,5 +1,5 @@
 /* eslint-disable react/react-in-jsx-scope */
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Pressable, Image} from 'react-native';
 import styles from './styles';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -7,43 +7,35 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useState} from 'react';
 import Comment from '../Comment/';
+import DoublePressable from '../DoublePressable';
 import {IPost} from '../../types/models';
-
-// const post = {
-//   id: '1',
-//   createdAt: '19 December 2021',
-//   image: 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/1.jpg',
-//   description:
-//     'Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic repellendus unde blanditiis. Eos fugiat dolorem ea fugit aut sapiente corrupti autem dolores deleniti architecto, omnis, amet unde dignissimos quam minima?',
-//   user: {
-//     image: 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/1.jpg',
-//     username: 'vadimnotjustdev',
-//   },
-//   nofComments: 11,
-//   nofLikes: 33,
-//   comments: [
-//     {
-//       id: '1',
-//       comment: 'Hello there',
-//       user: {
-//         username: 'vadimnotjustdev',
-//       },
-//     },
-//     {
-//       id: '2',
-//       comment: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. H',
-//       user: {
-//         username: 'vadimnotjustdev',
-//       },
-//     },
-//   ],
+import colors from '../../theme/colors';
 
 interface IfeedPost {
   post: IPost;
 }
 
 const FeedPost = ({post}: IfeedPost) => {
-  const [isLiked, setIsLiked] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [isLiked, setIsLiked] = useState(true);
+
+  const toggleDescriptionExpanded = () => {
+    setIsDescriptionExpanded(existingValue => !existingValue);
+  };
+
+  const toggleIsLiked = () => {
+    setIsLiked(existingValue => !existingValue);
+  };
+
+  let lastTap = 0;
+  const HandleDoublePress = () => {
+    const now = Date.now();
+    const DOUBLE_PRESS_DELAY = 300;
+    if (now - lastTap < DOUBLE_PRESS_DELAY) {
+      toggleIsLiked();
+    }
+    lastTap = now;
+  };
   return (
     <View style={styles.post}>
       {/*header*/}
@@ -59,15 +51,20 @@ const FeedPost = ({post}: IfeedPost) => {
         />
       </View>
       {/*CONTENT*/}
-      <Image source={{uri: post.image}} style={styles.image} />
+      <DoublePressable onDoublePress={toggleIsLiked}>
+        <Image source={{uri: post.image}} style={styles.image} />
+      </DoublePressable>
       {/*FOOTER*/}
       <View style={styles.footer}>
         <View style={styles.iconContainer}>
-          <AntDesign
-            name={isLiked ? 'heart' : 'hearto'}
-            size={24}
-            style={styles.icon}
-          />
+          <Pressable onPress={toggleIsLiked}>
+            <AntDesign
+              name={isLiked ? 'heart' : 'hearto'}
+              size={24}
+              style={styles.icon}
+              color={isLiked ? colors.accent : colors.black}
+            />
+          </Pressable>
           <Ionicons name="chatbubble-outline" size={24} style={styles.icon} />
           <Feather name="send" size={24} style={styles.icon} />
           <Feather name="bookmark" size={24} style={{marginLeft: 'auto'}} />
@@ -78,9 +75,14 @@ const FeedPost = ({post}: IfeedPost) => {
           <Text style={styles.bold}>{post.nofLikes} others</Text>
         </Text>
         {/*POST DESCRIPTION*/}
-        <Text style={styles.postDescription}>
+        <Text
+          style={styles.postDescription}
+          numberOfLines={isDescriptionExpanded ? 0 : 2}>
           <Text style={styles.bold}>{post.user.username}</Text>
           {post.description}
+        </Text>
+        <Text onPress={toggleDescriptionExpanded}>
+          {isDescriptionExpanded ? 'Less' : 'more'}
         </Text>
         {/*COMMENT*/}
         <Text style={styles.colorSousText}>
