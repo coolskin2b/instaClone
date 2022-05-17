@@ -8,9 +8,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useState} from 'react';
 import Comment from '../Comment/';
 import DoublePressable from '../DoublePressable';
+import Carousel from '../Carousel';
 import {IPost} from '../../types/models';
 import colors from '../../theme/colors';
-
+import VideoPlayer from '../VideoPlayer';
 interface IfeedPost {
   post: IPost;
 }
@@ -27,15 +28,23 @@ const FeedPost = ({post}: IfeedPost) => {
     setIsLiked(existingValue => !existingValue);
   };
 
-  let lastTap = 0;
-  const HandleDoublePress = () => {
-    const now = Date.now();
-    const DOUBLE_PRESS_DELAY = 300;
-    if (now - lastTap < DOUBLE_PRESS_DELAY) {
-      toggleIsLiked();
-    }
-    lastTap = now;
-  };
+  let content = null;
+  if (post.video) {
+    content = (
+      <DoublePressable onDoublePress={toggleIsLiked}>
+        <VideoPlayer uri={post.video} />
+      </DoublePressable>
+    );
+  } else if (post.image) {
+    content = (
+      <DoublePressable onDoublePress={toggleIsLiked}>
+        <Image source={{uri: post.image}} style={styles.image} />
+      </DoublePressable>
+    );
+  } else if (post.images) {
+    content = <Carousel images={post.images} onDoublePress={toggleIsLiked} />;
+  }
+
   return (
     <View style={styles.post}>
       {/*header*/}
@@ -51,9 +60,8 @@ const FeedPost = ({post}: IfeedPost) => {
         />
       </View>
       {/*CONTENT*/}
-      <DoublePressable onDoublePress={toggleIsLiked}>
-        <Image source={{uri: post.image}} style={styles.image} />
-      </DoublePressable>
+      {/* <DoublePressable onDoublePress={toggleIsLiked}>{content}</DoublePressable> */}
+      {content}
       {/*FOOTER*/}
       <View style={styles.footer}>
         <View style={styles.iconContainer}>

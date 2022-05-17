@@ -1,5 +1,5 @@
 /* eslint-disable react/react-in-jsx-scope */
-import {FlatList} from 'react-native';
+import {FlatList, ScrollView} from 'react-native';
 import FeedPost from '../../components/FeedPost/';
 import posts from '../../assets/data/posts.json';
 

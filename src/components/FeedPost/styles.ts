@@ -8,8 +8,6 @@ export default StyleSheet.create({
     width: '100%',
     aspectRatio: 1,
     resizeMode: 'cover',
-    borderRadius: 10,
-    borderWidth: 1,
   },
   header: {
     flexDirection: 'row',
