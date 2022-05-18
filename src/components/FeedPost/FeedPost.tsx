@@ -14,9 +14,10 @@ import colors from '../../theme/colors';
 import VideoPlayer from '../VideoPlayer';
 interface IfeedPost {
   post: IPost;
+  isVisible: boolean;
 }
 
-const FeedPost = ({post}: IfeedPost) => {
+const FeedPost = ({post, isVisible}: IfeedPost) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [isLiked, setIsLiked] = useState(true);
 
@@ -30,9 +31,10 @@ const FeedPost = ({post}: IfeedPost) => {
 
   let content = null;
   if (post.video) {
+    console.log(post.video);
     content = (
       <DoublePressable onDoublePress={toggleIsLiked}>
-        <VideoPlayer uri={post.video} />
+        <VideoPlayer uri={post.video} paused={isVisible} />
       </DoublePressable>
     );
   } else if (post.image) {

@@ -5,11 +5,13 @@ import colors from '../../theme/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 interface IVideoPlayer {
   uri: string;
+  paused?: boolean;
   onDoublePress?: () => void;
 }
 
-const VideoPlayer = ({uri, onDoublePress}: IVideoPlayer) => {
+const VideoPlayer = ({uri, onDoublePress, paused}: IVideoPlayer) => {
   const [muted, setMuted] = React.useState(true);
+  console.log(uri);
   return (
     <View>
       <Video
@@ -17,6 +19,8 @@ const VideoPlayer = ({uri, onDoublePress}: IVideoPlayer) => {
         style={styles.video}
         resizeMode="cover"
         muted={muted}
+        repeat
+        paused={paused}
       />
       <Pressable onPress={() => setMuted(!muted)}>
         <View style={styles.volumeIcon}>
